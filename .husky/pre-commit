@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+. "$(dirname "$0")/_/husky.sh"
+
+# TODO: affected:e2e affected:test affected:lint format:write
+pnpm lint-staged
+pnpm syncpack list-mismatches
+pnpm exec -- nx workspace-lint

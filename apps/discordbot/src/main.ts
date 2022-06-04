@@ -7,9 +7,9 @@ import helmet from "helmet"
 import { AppModule } from "./app.module"
 import { EnvironmentVariables } from "./environment"
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
     const app = await NestFactory.create(AppModule, {
-        bufferLogs: true
+        bufferLogs: true,
     })
 
     app.use(compression())
@@ -21,8 +21,8 @@ async function bootstrap() {
             transformOptions: {
                 enableImplicitConversion: true,
                 excludeExtraneousValues: true,
-            }
-        })
+            },
+        }),
     )
 
     app.enableShutdownHooks()

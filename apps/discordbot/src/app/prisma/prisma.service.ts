@@ -1,6 +1,7 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common"
 import { ConfigService } from "@nestjs/config"
 import { PrismaClient } from "database"
+
 import { EnvironmentVariables } from "../../environment"
 
 @Injectable()
@@ -13,9 +14,9 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
         this.database = new PrismaClient({
             datasources: {
                 db: {
-                    url: databaseUrl
-                }
-            }
+                    url: databaseUrl,
+                },
+            },
         })
     }
 
