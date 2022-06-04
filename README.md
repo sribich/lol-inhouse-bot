@@ -1,5 +1,23 @@
 # InhouseBot
 
+## Running
+
+### Install PNPM
+```
+npm --global install pnpm
+pnpm install
+```
+
+### Start Server
+```
+pnpm exec -- nx run-many --target=serve --all --parallel
+```
+
+### Run Prisma Migrations
+```
+pnpm exec -- prisma migrate dev --name=<NAME> --schema=libs/database/prisma/schema.prisma
+```
+
 ## Setup
 
 1. Create 3 voice channels
