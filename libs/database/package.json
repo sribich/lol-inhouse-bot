@@ -1,0 +1,15 @@
+{
+    "name": "database",
+    "dependencies": {
+        "@prisma/client": "3.14.0",
+        "prisma": "3.14.0"
+    },
+    "devDependencies": {},
+    "license": "UNLICENSED",
+    "main": "src/index.js",
+    "private": true,
+    "scripts": {
+        "prisma": "prisma --"
+    },
+    "types": "src/index.d.ts"
+}

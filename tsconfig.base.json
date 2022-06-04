@@ -23,7 +23,9 @@
         "esModuleInterop": true,
         "strictPropertyInitialization": true,
         "importHelpers": true,
-        "paths": {}
+        "paths": {
+            "database": ["libs/database/src/index.ts"]
+        }
     },
     "exclude": ["node_modules", "tmp"]
 }
