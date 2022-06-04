@@ -12,6 +12,7 @@ pnpm install
 ### Start Server
 
 ```
+docker-compose up -d
 pnpm exec -- nx run-many --target=serve --all --parallel
 ```
 
