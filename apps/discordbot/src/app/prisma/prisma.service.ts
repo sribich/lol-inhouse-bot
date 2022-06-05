@@ -1,12 +1,12 @@
+import { PrismaClient } from "@inhouse/database"
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common"
 import { ConfigService } from "@nestjs/config"
-import { PrismaClient } from "database"
 
 import { EnvironmentVariables } from "../../environment"
 
 @Injectable()
 export class PrismaService implements OnModuleInit, OnModuleDestroy {
-    private database: PrismaClient
+    public database: PrismaClient
 
     constructor(private configService: ConfigService<EnvironmentVariables>) {
         const databaseUrl = this.configService.get("DATABASE_URL")

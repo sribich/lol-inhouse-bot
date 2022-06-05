@@ -1,0 +1,23 @@
+{
+    "root": "libs/nestjs-discovery",
+    "sourceRoot": "libs/nestjs-discovery/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["libs/nestjs-discovery/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/libs/nestjs-discovery"],
+            "options": {
+                "jestConfig": "libs/nestjs-discovery/jest.config.ts",
+                "passWithNoTests": true
+            }
+        }
+    },
+    "tags": []
+}

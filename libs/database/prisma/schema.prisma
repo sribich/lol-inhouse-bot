@@ -10,6 +10,15 @@ datasource db {
     url = env("DATABASE_URL")
 }
 
-model Placeholder {
-    id  Int     @id @default(autoincrement())
+model Config {
+    @@map(name: "config")
+
+    id         Int      @default(autoincrement()) @id
+
+    name       String   @db.VarChar(32)
+    type       String   @db.VarChar(16)
+
+    value      String   @db.Text
+
+    @@unique(fields: [name], map: "name_index")
 }

@@ -1,5 +1,5 @@
 {
-    "name": "database",
+    "name": "@inhouse/database",
     "dependencies": {
         "@prisma/client": "3.14.0",
         "prisma": "3.14.0"

@@ -5,4 +5,6 @@ export type EnvironmentVariables = {
     DATABASE_URL: string
 
     DISCORD_BOT_SECRET: string
+    DISCORD_BOT_CLIENT_ID: string
+    DISCORD_BOT_GUILD_ID: string
 }
