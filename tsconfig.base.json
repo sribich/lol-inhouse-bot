@@ -22,6 +22,7 @@
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "strictPropertyInitialization": false,
+        "resolveJsonModule": true,
         "importHelpers": true,
         "paths": {
             "@inhouse-bot/nestjs-discovery": ["libs/nestjs-discovery/src/index.ts"],

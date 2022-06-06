@@ -1,5 +1,5 @@
 import Axios from "axios"
-import { CamelCase } from "camelcasejs"
+import camelCase from "camelcase"
 import { invert } from "lodash"
 
 /**
@@ -210,7 +210,7 @@ export function getChampionName(champ: number): string {
  */
 export function getChampionNameCapital(champ: number | string): string {
     let name = typeof champ === "number" ? getChampionName(champ) : champ
-    name = CamelCase(name.toLowerCase())
+    name = camelCase(name.toLowerCase())
     name = name.charAt(0).toUpperCase() + name.slice(1)
     return name
 }

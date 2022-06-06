@@ -2,14 +2,16 @@
     "name": "@inhouse/twisted",
     "license": "UNLICENSED",
     "private": true,
+    "main": "src/index.ts",
     "scripts": {},
     "dependencies": {
         "axios": "0.27.2",
-        "camelcasejs": "1.0.3",
+        "camelcase": "6.3.0",
         "lodash": "4.17.21",
         "promise-queue": "2.2.5"
     },
     "devDependencies": {
+        "@types/lodash": "4.14.182",
         "@types/promise-queue": "2.2.0"
     }
 }

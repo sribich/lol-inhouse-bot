@@ -71,11 +71,11 @@ export class DiscordService implements OnModuleInit {
             .map((it) => it.discoveredClass.instance)
             .filter((it): it is Command => it instanceof Command)
 
-        this.commands = commands.reduce((acc: Record<string, Command>, it) => {
+        this.commands = commands.reduce((acc: Map<string, Command>, it) => {
             const command = it.build()
-            acc[command.name] = it
+            acc.set(command.name, it)
             return acc
-        }, {})
+        }, new Map())
 
         const secret = this.configService.get("DISCORD_BOT_SECRET")
         const clientId = this.configService.get("DISCORD_BOT_CLIENT_ID")

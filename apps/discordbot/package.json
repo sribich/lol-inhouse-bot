@@ -7,6 +7,7 @@
         "@discordjs/rest": "0.4.1",
         "@inhouse/database": "workspace:*",
         "@inhouse/nestjs-discovery": "workspace:*",
+        "@inhouse/twisted": "workspace:*",
         "@nestjs/common": "8.4.5",
         "@nestjs/config": "2.0.1",
         "@nestjs/core": "8.4.5",

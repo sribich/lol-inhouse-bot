@@ -78,11 +78,11 @@ export class BaseApi<Region extends string> {
 
     private getRateLimits(headers: Record<string, string>): RateLimitDto {
         return {
-            Type: _.get(headers, "x-rate-limit-type", null),
-            AppRateLimit: _.get(headers, "x-app-rate-limit", null),
-            AppRateLimitCount: _.get(headers, "x-app-rate-limit-count", null),
+            Type: _.get(headers, "x-rate-limit-type", undefined),
+            AppRateLimit: _.get(headers, "x-app-rate-limit", ""),
+            AppRateLimitCount: _.get(headers, "x-app-rate-limit-count", ""),
             MethodRateLimit: _.get(headers, "x-method-rate-limit"),
-            MethodRatelimitCount: _.get(headers, "x-method-rate-limit-count", null),
+            MethodRatelimitCount: _.get(headers, "x-method-rate-limit-count", ""),
             RetryAfter: +_.get(headers, "retry-after", 0),
             EdgeTraceId: _.get(headers, "x-riot-edge-trace-id"),
         }
@@ -164,6 +164,9 @@ export class BaseApi<Region extends string> {
                 if (!this.isRateLimitError(error) && !this.isServiceUnavailableError(error)) {
                     throw parseError
                 }
+                if (!(parseError instanceof RateLimitError)) {
+                    throw parseError
+                }
                 // Set a new attemp
                 const {
                     rateLimits: { RetryAfter },
@@ -218,7 +221,6 @@ export class BaseApi<Region extends string> {
             url,
             method: "GET",
             headers: {
-                Origin: null,
                 "X-Riot-Token": this.key,
             },
             params: queryParams,
