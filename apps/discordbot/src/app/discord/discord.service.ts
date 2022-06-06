@@ -2,7 +2,8 @@ import { REST } from "@discordjs/rest"
 import { DiscoveryService } from "@inhouse/nestjs-discovery"
 import { Injectable, OnModuleInit } from "@nestjs/common"
 import { ConfigService } from "@nestjs/config"
-import { Client, Intents } from "discord.js"
+import { randomBytes } from "crypto"
+import { Client, Intents, MessageButton } from "discord.js"
 import { Routes } from "discord-api-types/v10"
 
 import { EnvironmentVariables } from "../../environment"
@@ -12,14 +13,21 @@ import { DISCORD_COMMAND } from "./discord.decorators"
 @Injectable()
 export class DiscordService implements OnModuleInit {
     private client: Client
-    private commands: Record<string, Command> = {}
+    private commands: Map<string, Command> = new Map()
+
+    private interactionCallbacks: Record<string, () => Promise<void>> = {}
 
     constructor(
         private configService: ConfigService<EnvironmentVariables>,
         private discoveryService: DiscoveryService,
     ) {
         this.client = new Client({
-            intents: [Intents.FLAGS.GUILDS],
+            intents: [
+                Intents.FLAGS.GUILDS,
+                Intents.FLAGS.GUILD_MESSAGES,
+                Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+            ],
+            // partials: ["MESSAGE", "CHANNEL", "REACTION"]
         })
 
         this.client.on("ready", () => {
@@ -32,14 +40,26 @@ export class DiscordService implements OnModuleInit {
             if (interaction.isCommand()) {
                 const commandName = interaction.commandName
 
-                if (this.commands[commandName]) {
-                    this.commands[commandName].execute(interaction)
+                if (this.commands.has(commandName)) {
+                    this.commands.get(commandName)?.execute(interaction)
                 }
+
+                return
             }
+
+            if (interaction.isButton() && this.interactionCallbacks[interaction.customId]) {
+                this.interactionCallbacks[interaction.customId]()
+                delete this.interactionCallbacks[interaction.customId]
+
+                return
+            }
+
+            console.log(interaction)
         })
 
-        this.client.on("messageReactionAdd", async (reaction) => {
-            console.log(reaction)
+        this.client.on("messageReactionAdd", async (reaction, user) => {
+            console.log(".")
+            console.log(reaction, user)
 
             reaction.message.channel.send("@person lobby is already full")
         })
@@ -70,5 +90,17 @@ export class DiscordService implements OnModuleInit {
         rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commandJson })
             .then(() => console.log("Successfully registered application commands."))
             .catch(console.error)
+    }
+
+    public getButtonComponent(callback: () => Promise<void>): Omit<MessageButton, "setCustomId"> {
+        const id = randomBytes(8).toString("hex")
+
+        if (this.interactionCallbacks[id]) {
+            return this.getButtonComponent(callback)
+        }
+
+        this.interactionCallbacks[id] = callback
+
+        return new MessageButton().setCustomId(id)
     }
 }

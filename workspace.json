@@ -3,6 +3,7 @@
     "projects": {
         "database": "libs/database",
         "discordbot": "apps/discordbot",
-        "nestjs-discovery": "libs/nestjs-discovery"
+        "nestjs-discovery": "libs/nestjs-discovery",
+        "twisted": "libs/twisted"
     }
 }

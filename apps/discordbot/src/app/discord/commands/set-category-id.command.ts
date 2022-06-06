@@ -30,6 +30,8 @@ export class SetCategoryIdCommand extends Command {
             return
         }
 
+        console.log(interaction)
+
         const categoryId = interaction.options.getString("id", true)
 
         const validCategoryIds =

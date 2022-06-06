@@ -11,8 +11,6 @@ datasource db {
 }
 
 model Config {
-    @@map(name: "config")
-
     id         Int      @default(autoincrement()) @id
 
     name       String   @db.VarChar(32)
@@ -21,4 +19,14 @@ model Config {
     value      String   @db.Text
 
     @@unique(fields: [name], map: "name_index")
+}
+
+model DiscordUser {
+    id         Int      @default(autoincrement()) @id
+
+    discord_id String   @db.VarChar(32)
+}
+
+model Summoner {
+    id         Int      @default(autoincrement()) @id
 }

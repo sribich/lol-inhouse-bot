@@ -21,10 +21,11 @@
         "skipDefaultLibCheck": true,
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
-        "strictPropertyInitialization": true,
+        "strictPropertyInitialization": false,
         "importHelpers": true,
         "paths": {
             "@inhouse-bot/nestjs-discovery": ["libs/nestjs-discovery/src/index.ts"],
+            "@inhouse-bot/twisted": ["libs/twisted/src/index.ts"],
             "database": ["libs/database/src/index.ts"]
         }
     },
