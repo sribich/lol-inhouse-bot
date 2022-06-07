@@ -229,6 +229,8 @@ export class BaseApi<Region extends string> {
             Logger.uri(options, endpoint)
         }
         try {
+            console.log(options)
+
             const apiResponse = await this.internalRequest<AxiosResponse<T>>(options)
             const { data, headers } = apiResponse
             return {

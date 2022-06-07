@@ -29,6 +29,7 @@ export class SummonerApi extends BaseApiLol {
             summonerName: value,
             by,
         }
+
         return this.request<SummonerV4DTO>(region, endpoint, params)
     }
     /**

@@ -3,19 +3,26 @@ import { DiscoveryService } from "@inhouse/nestjs-discovery"
 import { Injectable, OnModuleInit } from "@nestjs/common"
 import { ConfigService } from "@nestjs/config"
 import { randomBytes } from "crypto"
-import { Client, Intents, MessageButton } from "discord.js"
+import { ButtonInteraction, Client, Intents, MessageButton } from "discord.js"
 import { Routes } from "discord-api-types/v10"
 
 import { EnvironmentVariables } from "../../environment"
 import { Command } from "./command"
 import { DISCORD_COMMAND } from "./discord.decorators"
+import { InteractionResult } from "./discord.types"
 
 @Injectable()
 export class DiscordService implements OnModuleInit {
     private client: Client
     private commands: Map<string, Command> = new Map()
 
-    private interactionCallbacks: Record<string, () => Promise<void>> = {}
+    private buttonCallbacks: Map<
+        string,
+        {
+            callback: (interaction: ButtonInteraction, data: any) => Promise<InteractionResult>
+            data: unknown
+        }
+    > = new Map()
 
     constructor(
         private configService: ConfigService<EnvironmentVariables>,
@@ -27,7 +34,6 @@ export class DiscordService implements OnModuleInit {
                 Intents.FLAGS.GUILD_MESSAGES,
                 Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
             ],
-            // partials: ["MESSAGE", "CHANNEL", "REACTION"]
         })
 
         this.client.on("ready", () => {
@@ -47,21 +53,26 @@ export class DiscordService implements OnModuleInit {
                 return
             }
 
-            if (interaction.isButton() && this.interactionCallbacks[interaction.customId]) {
-                this.interactionCallbacks[interaction.customId]()
-                delete this.interactionCallbacks[interaction.customId]
+            if (interaction.isButton()) {
+                const callbackMeta = this.buttonCallbacks.get(interaction.customId)
+
+                if (!callbackMeta) {
+                    // TODO: Word this better
+                    interaction.reply("This command is no longer valid.")
+                    return
+                }
+
+                if (
+                    (await callbackMeta.callback(interaction, callbackMeta.data)) ===
+                    InteractionResult.Handled
+                ) {
+                    this.buttonCallbacks.delete(interaction.customId)
+                }
 
                 return
             }
 
-            console.log(interaction)
-        })
-
-        this.client.on("messageReactionAdd", async (reaction, user) => {
-            console.log(".")
-            console.log(reaction, user)
-
-            reaction.message.channel.send("@person lobby is already full")
+            void 0
         })
     }
 
@@ -92,14 +103,20 @@ export class DiscordService implements OnModuleInit {
             .catch(console.error)
     }
 
-    public getButtonComponent(callback: () => Promise<void>): Omit<MessageButton, "setCustomId"> {
+    public getButtonComponent<T>(
+        callback: (interaction: ButtonInteraction, data: T) => Promise<InteractionResult>,
+        data: T,
+    ): Omit<MessageButton, "setCustomId"> {
         const id = randomBytes(8).toString("hex")
 
-        if (this.interactionCallbacks[id]) {
-            return this.getButtonComponent(callback)
+        if (this.buttonCallbacks.has(id)) {
+            return this.getButtonComponent(callback, data)
         }
 
-        this.interactionCallbacks[id] = callback
+        this.buttonCallbacks.set(id, {
+            callback,
+            data,
+        })
 
         return new MessageButton().setCustomId(id)
     }
