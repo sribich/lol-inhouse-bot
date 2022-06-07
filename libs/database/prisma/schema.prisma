@@ -1,32 +1,115 @@
 generator client {
-    provider = "prisma-client-js"
-    output = "../src"
-    binaryTargets = ["native", "linux-musl"]
-    previewFeatures = ["interactiveTransactions"]
+  provider        = "prisma-client-js"
+  output          = "../src"
+  binaryTargets   = ["native", "linux-musl"]
+  previewFeatures = ["interactiveTransactions"]
 }
 
 datasource db {
-    provider = "postgresql"
-    url = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
+
+// MODELS
 
 model Config {
-    id         Int      @default(autoincrement()) @id
+  id Int @id @default(autoincrement())
 
-    name       String   @db.VarChar(32)
-    type       String   @db.VarChar(16)
+  name String @db.VarChar(32)
+  type String @db.VarChar(16)
 
-    value      String   @db.Text
+  value String @db.Text
 
-    @@unique(fields: [name], map: "name_index")
+  @@unique([name], map: "name_index")
 }
 
-model DiscordUser {
-    id         Int      @default(autoincrement()) @id
+model User {
+  id Int @id @default(autoincrement())
 
-    discord_id String   @db.VarChar(32)
+  discord_id String @db.VarChar(32)
+
+  summoners Summoner[]
+  games     GameUser[]
+  stats     UserStat[]
+
+  @@unique([discord_id], map: "discord_id_index")
 }
 
 model Summoner {
-    id         Int      @default(autoincrement()) @id
+  id Int @id @default(autoincrement())
+
+  user_id     Int
+  summoner_id String
+  puuid       String
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@unique([puuid])
+  @@unique([summoner_id])
+}
+
+model GameUser {
+  game_id Int
+  user_id Int
+  team    TeamId
+  won     Boolean?
+
+  game Game @relation(fields: [game_id], references: [id])
+  user User @relation(fields: [user_id], references: [id])
+
+  @@id([game_id, user_id])
+}
+
+model Tournament {
+  id Int @id @default(autoincrement())
+
+  games      Game[]
+  user_stats UserStat[]
+}
+
+model Game {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  endedAt   DateTime?
+
+  tournament_id   Int
+  tournament_code String
+  data            Json?
+  state           GameState
+  winningTeam     TeamId?
+
+  tournament Tournament @relation(fields: [tournament_id], references: [id])
+  users      GameUser[]
+
+  @@unique([tournament_code], map: "tournament_code_index")
+}
+
+model UserStat {
+  user_id       Int
+  tournament_id Int
+
+  elo     Float
+  wins    Int
+  losses  Int
+  kills   Int
+  deaths  Int
+  assists Int
+
+  user       User       @relation(fields: [user_id], references: [id])
+  tournament Tournament @relation(fields: [tournament_id], references: [id])
+
+  @@id([user_id, tournament_id])
+}
+
+// ENUMS
+
+enum TeamId {
+  BLUE
+  RED
+}
+
+enum GameState {
+  IN_PROGRESS
+  ENDED
+  EXCEPTION
 }

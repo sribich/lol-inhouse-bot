@@ -89,5 +89,8 @@
             "tools/actions/*/package.json"
         ],
         "versionGroups": []
+    },
+    "prisma": {
+        "schema": "libs/database/prisma/schema.prisma"
     }
 }

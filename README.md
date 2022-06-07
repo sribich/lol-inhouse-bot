@@ -19,7 +19,7 @@ pnpm exec -- nx run-many --target=serve --all --parallel
 ### Run Prisma Migrations
 
 ```
-pnpm exec -- prisma migrate dev --name=<NAME> --schema=libs/database/prisma/schema.prisma
+pnpm exec -- prisma migrate dev --name=<NAME>
 ```
 
 ## Configuring The Bot
